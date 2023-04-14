@@ -34,7 +34,7 @@ def sobre():
 hoje = date.today().strftime('%Y-%m-%d')
 
 # Função para obter os compromissos da agenda presidencial
-def get_compromissos_presidenciais():
+def compromissos_presidenciais():
     try:
         # Obtém o conteúdo HTML da página da agenda presidencial
         url = "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/" + hoje
@@ -104,7 +104,7 @@ def telegram_bot():
         boas_vindas_exibida = True
 
     if message_text == '1':
-        compromissos = get_compromissos_presidenciais()
+        compromissos = compromissos_presidenciais()
         if compromissos:
             mensagem_compromissos = f"🗓️ Compromissos do presidente em {hoje}:\n\n"
             for evento in compromissos:
