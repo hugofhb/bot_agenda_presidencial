@@ -78,7 +78,7 @@ def telegram_bot():
     message = update["message"]["text"]
 
     if message.lower() == '1':
-        compromissos = get_compromissos_presidenciais()
+        compromissos = compromissos_presidenciais()
         if compromissos:
             mensagem_compromissos = f"🗓️ Compromissos do presidente em {hoje}:\n\n"
             for evento in compromissos:
