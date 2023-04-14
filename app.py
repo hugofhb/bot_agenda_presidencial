@@ -63,7 +63,7 @@ def get_compromissos_presidenciais():
 
         return eventos
     else:
-        return None
+        return f"Erro: {response.status_code}"
     
  
 compromissos = get_compromissos_presidenciais()
