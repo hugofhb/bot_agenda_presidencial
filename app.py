@@ -1,11 +1,13 @@
 import os
 
+from datetime import datetime
+
 from flask import Flask, request ,render_template
 from tchan import ChannelScraper
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 import telegram
 import pandas as pd
 from bs4 import BeautifulSoup
