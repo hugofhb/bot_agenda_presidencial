@@ -30,3 +30,101 @@ def index():
 @app.route("/sobre")
 def sobre():
     return menu + "Aqui vai o conteúdo da página Sobre"
+
+
+
+# Define a data de hoje
+hoje = date.today().strftime('%Y-%m-%d')
+
+# Função para obter os compromissos da agenda presidencial
+def get_compromissos_presidenciais():
+    # Obtém o conteúdo HTML da página da agenda presidencial
+    url = "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/" + hoje
+    response = requests.get(url)
+    html = response.content
+
+    # Analisa o HTML para obter as informações relevantes
+    soup = BeautifulSoup(html, 'html.parser')
+
+    if soup.find('ul', 'list-compromissos'):
+        eventos = []
+        lista_compromissos = soup.find('ul', 'list-compromissos')
+        for item in lista_compromissos.find_all('div', 'item-compromisso'):
+            titulo = item.find('h2', 'compromisso-titulo').text
+            inicio = item.find('time', 'compromisso-inicio').text
+            local = item.find('div', 'compromisso-local').text
+            novo_evento = {
+                'titulo': titulo,
+                'inicia_as': inicio,
+                'local': local
+            }
+            eventos.append(novo_evento)
+
+        return eventos
+    else:
+        return None
+    
+ 
+compromissos = get_compromissos_presidenciais()
+
+if compromissos:
+    print("Compromissos do Presidente da República - " + hoje + ":\n")
+    for evento in compromissos:
+        print(evento['titulo'] + " - " + evento['inicia_as'] + " - " + evento['local'] + "\n")
+else:
+    print("Não há compromissos agendados para o Presidente da República - " + hoje + ".")
+
+
+
+
+
+@app.route("/telegram-bot", methods=["POST"])
+def telegram_bot():
+    update = request.json
+    chat_id = update["message"]["chat"]["id"]
+    message_text = update["message"]["text"]
+
+    if not boas_vindas_exibida:
+        # Verifica se a mensagem de boas-vindas já foi exibida
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "👋 Seja bem-vindo ao bot Agenda Presidencial!\n\n"
+                    "📌 Digite o número da opção desejada:\n"
+                    "1. Ver compromissos do presidente\n"
+                    "2. Acessar o site do governo federal para mais detalhes",
+            "parse_mode": "MarkdownV2"
+        }
+        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+        global boas_vindas_exibida
+        boas_vindas_exibida = True  # Atualiza a variável de controle para indicar que a mensagem de boas-vindas foi exibida
+
+    if message_text == '1':
+        compromissos = get_compromissos_presidenciais()
+        if compromissos:
+            mensagem_compromissos = f"🗓️ Compromissos do presidente em {hoje}:\n\n"
+            for evento in compromissos:
+                mensagem_compromissos += f"🔸 *{evento['titulo']}*\n"
+                mensagem_compromissos += f"    🕒 Início: {evento['inicia_as']}\n"
+                mensagem_compromissos += f"    📍 Local: {evento['local']}\n\n"
+            nova_mensagem = {
+                "chat_id": chat_id,
+                "text": mensagem_compromissos,
+                "parse_mode": "MarkdownV2"
+            }
+            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+        else:
+            nova_mensagem = {
+                "chat_id": chat_id,
+                "text": f"🤔 O presidente não tem compromissos agendados para hoje ({hoje}).",
+                "parse_mode": "MarkdownV2"
+            }
+            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+    elif message_text == '2':
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "🔗 Acesse o site do governo federal para mais detalhes:\n"
+                    "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/",
+            "disable_web_page_preview": True,
+            "parse_mode": "MarkdownV2"
+        }
+        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
