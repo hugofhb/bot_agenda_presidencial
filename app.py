@@ -8,6 +8,7 @@ import requests
 from datetime import date, timedelta
 import telegram
 import pandas as pd
+from bs4 import BeautifulSoup
 
 
 TELEGRAM_API_KEY = os.environ["TELEGRAM_API_KEY"]
