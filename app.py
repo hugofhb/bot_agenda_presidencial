@@ -100,7 +100,7 @@ def telegram_bot():
                     "2. Acessar o site do governo federal para mais detalhes",
             "parse_mode": "MarkdownV2"
         }
-        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
         boas_vindas_exibida = True
 
     if message_text == '1':
@@ -116,14 +116,14 @@ def telegram_bot():
                 "text": mensagem_compromissos,
                 "parse_mode": "MarkdownV2"
             }
-            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
         else:
             nova_mensagem = {
                 "chat_id": chat_id,
                 "text": f"🤔 O presidente não tem compromissos agendados para hoje ({hoje}).",
                 "parse_mode": "MarkdownV2"
             }
-            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
     elif message_text == '2':
         nova_mensagem = {
             "chat_id": chat_id,
@@ -132,7 +132,7 @@ def telegram_bot():
             "disable_web_page_preview": True,
             "parse_mode": "MarkdownV2"
         }
-        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
     else:
         nova_mensagem = {
             "chat_id": chat_id,
