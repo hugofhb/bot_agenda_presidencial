@@ -139,7 +139,7 @@ def telegram_bot():
             "text": "❌ Opção inválida. Por favor, digite '1' para ver os compromissos do presidente ou '2' para acessar o site do governo federal.",
             "parse_mode": "MarkdownV2"
         }
-        requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+        requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
         
     
     return "ok"
