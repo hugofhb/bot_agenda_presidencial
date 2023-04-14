@@ -85,63 +85,39 @@ boas_vindas_exibida = False
 
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
-    global boas_vindas_exibida
     update = request.json
     chat_id = update["message"]["chat"]["id"]
-    message_text = update["message"]["text"]
+    message = update["message"]["text"]
 
-    if not boas_vindas_exibida:
-        # Verifica se a mensagem de boas-vindas já foi exibida
-        nova_mensagem = {
-            "chat_id": chat_id,
-            "text": "👋 Seja bem-vindo ao bot Agenda Presidencial!\n\n"
-                    "📌 Digite o número da opção desejada:\n"
-                    "1. Ver compromissos do presidente\n"
-                    "2. Acessar o site do governo federal para mais detalhes",
-            "parse_mode": "MarkdownV2"
-        }
-        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
-        boas_vindas_exibida = True
-
-    if message_text == '1':
-        compromissos = compromissos_presidenciais()
+    if message.lower() == '1':
+        compromissos = get_compromissos_presidenciais()
         if compromissos:
             mensagem_compromissos = f"🗓️ Compromissos do presidente em {hoje}:\n\n"
             for evento in compromissos:
                 mensagem_compromissos += f"🔸 *{evento['titulo']}*\n"
                 mensagem_compromissos += f"    🕒 Início: {evento['inicia_as']}\n"
                 mensagem_compromissos += f"    📍 Local: {evento['local']}\n\n"
-            nova_mensagem = {
-                "chat_id": chat_id,
-                "text": mensagem_compromissos,
-                "parse_mode": "MarkdownV2"
-            }
-            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
+            mensagem = mensagem_compromissos
         else:
-            nova_mensagem = {
-                "chat_id": chat_id,
-                "text": f"🤔 O presidente não tem compromissos agendados para hoje ({hoje}).",
-                "parse_mode": "MarkdownV2"
-            }
-            requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
-    elif message_text == '2':
-        nova_mensagem = {
-            "chat_id": chat_id,
-            "text": "🔗 Acesse o site do governo federal para mais detalhes:\n"
-                    "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/",
-            "disable_web_page_preview": True,
-            "parse_mode": "MarkdownV2"
-        }
-        requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
+            mensagem = f"🤔 O presidente não tem compromissos agendados para hoje ({hoje})."
+    elif message.lower() == '2':
+        mensagem = "🔗 Acesse o site do governo federal para mais detalhes:\nhttps://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/"
     else:
+        mensagem = "Escolha uma das opções abaixo:\n1. Ver compromissos do presidente\n2. Acessar o site do governo federal para mais detalhes"
+
+    partes = []
+    while mensagem:
+        partes.append(mensagem[:4096])
+        mensagem = mensagem[4096:]
+
+    for parte in partes:
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "❌ Opção inválida. Por favor, digite '1' para ver os compromissos do presidente ou '2' para acessar o site do governo federal.",
+            "text": parte,
             "parse_mode": "MarkdownV2"
         }
-        requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
-        
-    
+        resposta = requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
+        print(resposta.text)
+
     return "ok"
-    
    
