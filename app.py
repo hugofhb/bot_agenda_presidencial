@@ -61,14 +61,12 @@ def compromissos_presidenciais():
                 eventos.append(novo_evento)
 
             # Atualiza a lista de compromissos
-            global compromissos_presidenciais
-            compromissos_presidenciais = eventos
-
             return eventos
         else:
             return []
     except:
         return None
+
 
 
 @app.route("/telegram-bot", methods=["POST"])
@@ -78,7 +76,7 @@ def telegram_bot():
     message = update["message"]["text"]
 
     if message.lower() == '1':
-        compromissos = compromissos_presidenciais
+        compromissos = compromissos_presidenciais ()
         if compromissos:
             mensagem_compromissos = f"🗓️ Compromissos do presidente em {hoje}:\n\n"
             for evento in compromissos:
