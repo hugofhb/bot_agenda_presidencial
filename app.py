@@ -66,7 +66,7 @@ def compromissos_presidenciais():
 
     
  
-compromissos = get_compromissos_presidenciais()
+compromissos = compromissos_presidenciais()
 
 if compromissos:
     print("Compromissos do Presidente da República - " + hoje + ":\n")
