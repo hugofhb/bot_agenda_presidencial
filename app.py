@@ -35,31 +35,35 @@ hoje = date.today().strftime('%Y-%m-%d')
 
 # Função para obter os compromissos da agenda presidencial
 def get_compromissos_presidenciais():
-    # Obtém o conteúdo HTML da página da agenda presidencial
-    url = "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/" + hoje
-    response = requests.get(url)
-    html = response.content
+    try:
+        # Obtém o conteúdo HTML da página da agenda presidencial
+        url = "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica-lula/agenda-do-presidente-da-republica/" + hoje
+        response = requests.get(url)
+        html = response.content
 
-    # Analisa o HTML para obter as informações relevantes
-    soup = BeautifulSoup(html, 'html.parser')
+        # Analisa o HTML para obter as informações relevantes
+        soup = BeautifulSoup(html, 'html.parser')
 
-    if soup.find('ul', 'list-compromissos'):
-        eventos = []
-        lista_compromissos = soup.find('ul', 'list-compromissos')
-        for item in lista_compromissos.find_all('div', 'item-compromisso'):
-            titulo = item.find('h2', 'compromisso-titulo').text
-            inicio = item.find('time', 'compromisso-inicio').text
-            local = item.find('div', 'compromisso-local').text
-            novo_evento = {
-                'titulo': titulo,
-                'inicia_as': inicio,
-                'local': local
-            }
-            eventos.append(novo_evento)
+        if soup.find('ul', 'list-compromissos'):
+            eventos = []
+            lista_compromissos = soup.find('ul', 'list-compromissos')
+            for item in lista_compromissos.find_all('div', 'item-compromisso'):
+                titulo = item.find('h2', 'compromisso-titulo').text
+                inicio = item.find('time', 'compromisso-inicio').text
+                local = item.find('div', 'compromisso-local').text
+                novo_evento = {
+                    'titulo': titulo,
+                    'inicia_as': inicio,
+                    'local': local
+                }
+                eventos.append(novo_evento)
 
-        return eventos
-    else:
-        return f"Erro: {response.status_code}"
+            return eventos
+        else:
+            return []
+    except:
+        return None
+
     
  
 compromissos = get_compromissos_presidenciais()
