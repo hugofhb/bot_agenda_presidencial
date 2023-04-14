@@ -101,11 +101,11 @@ def telegram_bot():
     for parte in partes:
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": parte,
-            "parse_mode": "MarkdownV2"
+            "text": parte
         }
         resposta = requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", json=nova_mensagem)
         print(resposta.text)
 
     return "ok"
+
    
