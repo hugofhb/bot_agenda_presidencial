@@ -30,10 +30,9 @@ def sobre():
 
 
 
-# Define a data de hoje
-hoje = date.today().strftime('%Y-%m-%d')
+# Obtém a data atual
+hoje = datetime.now().strftime("%Y-%m-%d")
 
-# Função para obter os compromissos da agenda presidencial
 def compromissos_presidenciais():
     try:
         # Obtém o conteúdo HTML da página da agenda presidencial
@@ -58,29 +57,15 @@ def compromissos_presidenciais():
                 }
                 eventos.append(novo_evento)
 
+            # Atualiza a lista de compromissos
+            global compromissos_presidenciais
+            compromissos_presidenciais = eventos
+
             return eventos
         else:
             return []
     except:
         return None
-
-    
- 
-compromissos = compromissos_presidenciais()
-
-if compromissos:
-    print("Compromissos do Presidente da República - " + hoje + ":\n")
-    for evento in compromissos:
-        print(evento['titulo'] + " - " + evento['inicia_as'] + " - " + evento['local'] + "\n")
-else:
-    print("Não há compromissos agendados para o Presidente da República - " + hoje + ".")
-
-# Variável global para armazenar os compromissos
-compromissos_presidenciais = []
-boas_vindas_exibida = []
-chat_ids_notificacoes = []
-boas_vindas_exibida = False
-
 
 
 @app.route("/telegram-bot", methods=["POST"])
