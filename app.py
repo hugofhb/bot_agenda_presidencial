@@ -5,10 +5,11 @@ from tchan import ChannelScraper
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import telegram
 import pandas as pd
 from bs4 import BeautifulSoup
+
 
 
 TELEGRAM_API_KEY = os.environ["TELEGRAM_API_KEY"]
