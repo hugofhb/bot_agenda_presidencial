@@ -7,3 +7,4 @@ oauth2client
 pandas 
 altair
 numpy
+python-telegram-bot
