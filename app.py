@@ -74,12 +74,17 @@ if compromissos:
 else:
     print("Não há compromissos agendados para o Presidente da República - " + hoje + ".")
 
-
+# Variável global para armazenar os compromissos
+compromissos_presidenciais = []
+boas_vindas_exibida = []
+chat_ids_notificacoes = []
+boas_vindas_exibida = False
 
 
 
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
+    global boas_vindas_exibida
     update = request.json
     chat_id = update["message"]["chat"]["id"]
     message_text = update["message"]["text"]
@@ -95,8 +100,7 @@ def telegram_bot():
             "parse_mode": "MarkdownV2"
         }
         requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
-        global boas_vindas_exibida
-        boas_vindas_exibida = True  # Atualiza a variável de controle para indicar que a mensagem de boas-vindas foi exibida
+        boas_vindas_exibida = True
 
     if message_text == '1':
         compromissos = get_compromissos_presidenciais()
