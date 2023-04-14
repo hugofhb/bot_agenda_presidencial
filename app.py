@@ -141,4 +141,4 @@ def telegram_bot():
         }
         requests.post(f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
     
-    return '', 200
+    return 'Mensagem de resposta válida'
